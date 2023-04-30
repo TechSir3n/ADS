@@ -13,6 +13,8 @@ public:
 
     TreeNode(TreeNode &&t_node) noexcept { *this = std::move(t_node); }
 
+    TreeNode(const TreeNode & t_node) noexcept { *this = t_node; }
+
     virtual ~TreeNode() noexcept { }
     
 protected:
@@ -22,6 +24,16 @@ protected:
             left = std::exchange(t_node.left, nullptr);
             right = std::exchange(t_node.right, nullptr);
         }
+        return *this;
+    }
+
+    TreeNode & operator=(TreeNode<Type> &&t_node) noexcept {
+        if(this!=&t_node) { 
+            val = std::move(t_node.val);
+            left = std::move(t_node.left);
+            right = std::move(t_node.right);
+        }
+
         return *this;
     }
 
