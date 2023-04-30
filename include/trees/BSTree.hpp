@@ -1,6 +1,7 @@
 #include "TreeNode.hpp"
 #include <climits>
 #include <algorithm>
+#include <queue>
 
 template <typename Type>
 class BSTree : public TreeNode<Type>
@@ -15,7 +16,7 @@ public:
 
     constexpr BSTree(Node *root, const std::initializer_list<Type> &t_list)  {
         std::for_each(t_list.begin(), t_list.end(), [&](auto &t_element)
-                      { insert(t_element, root); });
+                      { insert(t_element); });
     }
 
     BSTree<Type> &operator=(const BSTree<Type> &t_node) {
@@ -169,20 +170,48 @@ public:
         return minNode;
     }
 
-    [[nodiscard]] int countNodes(Node *node) const noexcept {
+    [[nodiscard]] const int countNodes() const noexcept {
         if(root == nullptr) {
             return 0;
-        } else {
-           int count = 1;
-           count+=countNodes(node->left);
-           count+=countNodes(node->right);
-           return count;
+        } 
+
+        std::queue<Node*> deq;
+        deq.push(root);
+        int count = 0;
+
+        while(!deq.empty()){
+            Node *current = deq.front();
+            deq.pop();
+            count++;
+
+            if(current->left!=nullptr) { 
+                deq.push(current->left);
+            } 
+            if(current->right!=nullptr) { 
+                deq.push(current->right);
+            }
         }
+        return count;
     }
 
-    [[nodiscard]] bool isBalanceTree() const noexcept {
+    [[nodiscard]] const int getHeight(Node *node) const noexcept {
+        if(node == nullptr) { return 0; }
+        int leftHeight = getHeight(node->left);
+        int rightHeight = getHeight(node->right);
+        return std::max(leftHeight,rightHeight) + 1;
+    }
 
-        return true;
+    [[nodiscard]] const bool isBalanceTree(Node *node) const noexcept {
+        if(node == nullptr) { return true; }
+
+        int leftH = getHeight(node->left);
+        int rightH = getHeight(node->right);
+
+        if(leftH-rightH > 1) { 
+            return false;
+        }
+
+        return isBalanceTree(node->left) && isBalanceTree(node->right);
     }
 
     template<typename Func> 
