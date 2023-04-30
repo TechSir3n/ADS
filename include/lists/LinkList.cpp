@@ -1,0 +1,8 @@
+
+
+
+class LinkList { 
+public:
+
+private:
+};

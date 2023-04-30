@@ -9,7 +9,7 @@ public:
     TreeNode() : val(Type()), right(nullptr), left(nullptr) { }
 
     explicit TreeNode(Type &&t_val, TreeNode *t_left, TreeNode *t_right) : 
-        val(std::forward<Type>(t_val)), right(t_right), left(t_left) { }
+        val(std::move(t_val)), right(t_right), left(t_left) { }
 
     TreeNode(TreeNode &&t_node) noexcept { *this = std::move(t_node); }
 

@@ -2,12 +2,19 @@
 #include <climits>
 #include <algorithm>
 #include <queue>
+#include <memory>
+#include <type_traits>
 
 template <typename Type>
-class BSTree : public TreeNode<Type>
-{
-public:
+class BSTree : public TreeNode<Type> {
+private:
     using Node = TreeNode<Type>;
+    using pointer_node = std::unique_ptr<TreeNode<Type>>;
+    using value_type = Type;
+    using reference_type = Type&;
+    using const_reference = const Type&;        
+    template<typename T,typename TT>
+    using base_of = typename std::enable_if_t<std::is_base_of<T,TT>::value, bool>; // it's just practice for metaprogramming 
 
 public:
     BSTree() noexcept {
@@ -24,7 +31,7 @@ public:
             delete this->root;
             root = t_node.root;
         }
-
+        
         return *this;
     }
 
@@ -47,7 +54,8 @@ public:
     }
 
 public:
-    void insertNode(const Type &t_element)
+    template<typename Derived, base_of<TreeNode<Type>,Derived> = true> 
+    inline void insertNode(const Type &t_element)
     {
         Node *n_node = new Node(t_element);
 
@@ -77,7 +85,8 @@ public:
         }
     }
 
-    void erase(const Type &t_element) {
+    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
+    inline void erase(const Type &t_element) {
         if(root == nullptr){
             return;
         }
@@ -144,7 +153,7 @@ public:
         }
     }
 
-    [[nodiscard]] const Node * getMax(Node *node) const noexcept {
+    [[nodiscard]] inline const Node * getMax(Node *node) const noexcept {
         if(node == nullptr) {
             return node;
         }
@@ -157,7 +166,7 @@ public:
         return maxNode;
     }
 
-    [[nodiscard]] const Node *getMin(Node *node) const noexcept {
+    [[nodiscard]] inline const Node *getMin(Node *node) const noexcept {
         if(node == nullptr) {
             return node;
         }
@@ -169,8 +178,10 @@ public:
 
         return minNode;
     }
+    
 
-    [[nodiscard]] const int countNodes() const noexcept {
+    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
+    [[nodiscard]] inline const int countNodes() const noexcept {
         if(root == nullptr) {
             return 0;
         } 
@@ -194,6 +205,7 @@ public:
         return count;
     }
 
+    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
     [[nodiscard]] const int getHeight(Node *node) const noexcept {
         if(node == nullptr) { return 0; }
         int leftHeight = getHeight(node->left);
@@ -201,7 +213,8 @@ public:
         return std::max(leftHeight,rightHeight) + 1;
     }
 
-    [[nodiscard]] const bool isBalanceTree(Node *node) const noexcept {
+     template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
+    [[nodiscard]] inline const bool isBalanceTree(Node *node) const noexcept {
         if(node == nullptr) { return true; }
 
         int leftH = getHeight(node->left);
@@ -215,7 +228,7 @@ public:
     }
 
     template<typename Func> 
-    [[maybe_unused]] void preorderPrint(Node *t_node,Func fnc) const noexcept { 
+    [[maybe_unused]] inline void preorderPrint(Node *t_node,Func fnc) const noexcept { 
         if(t_node!=nullptr) {
             fnc(root);
             preorderPrint(t_node->left,fnc);
@@ -223,8 +236,8 @@ public:
         }
     }
 
-    template<typename Func>
-   void postorderPrint(Node* t_node,Func fnc) const noexcept {
+   template<typename Func>
+   inline void postorderPrint(Node* t_node,Func fnc) const noexcept {
         if(t_node!=nullptr) {
          postorderPrint(t_node->left,fnc);
          fnc(t_node);
@@ -233,7 +246,7 @@ public:
     }
 
     template<typename Func> 
-    [[maybe_unused]] void revrorderPrint(Node* t_node,Func fnc) const noexcept {
+    [[maybe_unused]] inline void revrorderPrint(Node* t_node,Func fnc) const noexcept {
         if(t_node!=nullptr) {
             revrorderPrint(t_node->left,fnc);
             revrorderPrint(t_node->right,fnc);
@@ -248,5 +261,5 @@ public:
     }   
 
 private:
-    Node *root;
+    Node  *root;
 };
