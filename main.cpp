@@ -1,5 +1,8 @@
 #include <iostream>
 #include "./include/trees/BSTree.hpp"
+#include "./include/trees/AVLTree.hpp"
+
+using namespace ADS;
 
 int main(void) {
     
@@ -10,6 +13,10 @@ int main(void) {
     
     bst.erase<BSTree<int>>(19);
     bst.printElements();
+
+
+    AVLTree<int> avl;
+
 
     return 0;
 }

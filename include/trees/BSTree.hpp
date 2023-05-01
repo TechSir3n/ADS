@@ -1,3 +1,6 @@
+#ifndef ADS_INCLUDE_TREES_BSTREE_HPP_
+#define ADS_INCLUDE_TREES_BSTREE_HPP_
+
 #include "TreeNode.hpp"
 #include <climits>
 #include <algorithm>
@@ -5,16 +8,22 @@
 #include <memory>
 #include <type_traits>
 
+namespace ADS {
 template <typename Type>
 class BSTree : public TreeNode<Type> {
 private:
     using Node = TreeNode<Type>;
+
     using pointer_node = std::unique_ptr<TreeNode<Type>>;
+
     using value_type = Type;
+    
     using reference_type = Type&;
+
     using const_reference = const Type&;        
+
     template<typename T,typename TT>
-    using base_of = typename std::enable_if_t<std::is_base_of<T,TT>::value, bool>; // it's just practice for metaprogramming 
+    using is_base_of = typename std::enable_if_t<std::is_base_of<T,TT>::value, bool>; // it's just practice for metaprogramming 
 
 public:
     BSTree() noexcept {
@@ -54,8 +63,8 @@ public:
     }
 
 public:
-    template<typename Derived, base_of<TreeNode<Type>,Derived> = true> 
-    inline void insertNode(const Type &t_element)
+    template<typename Derived, is_base_of<TreeNode<Type>,Derived> = true> 
+    void insertNode(const Type &t_element)
     {
         Node *n_node = new Node(t_element);
 
@@ -85,8 +94,8 @@ public:
         }
     }
 
-    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
-    inline void erase(const Type &t_element) {
+    template<typename Derived,is_base_of<TreeNode<Type>,Derived> = true>
+    void erase(const Type &t_element) {
         if(root == nullptr){
             return;
         }
@@ -153,6 +162,7 @@ public:
         }
     }
 
+    template<typename Derived, is_base_of<TreeNode<Type>,Derived> = true> 
     [[nodiscard]] inline const Node * getMax(Node *node) const noexcept {
         if(node == nullptr) {
             return node;
@@ -166,6 +176,7 @@ public:
         return maxNode;
     }
 
+    template<typename Derived, is_base_of<TreeNode<Type>,Derived> = true> 
     [[nodiscard]] inline const Node *getMin(Node *node) const noexcept {
         if(node == nullptr) {
             return node;
@@ -180,8 +191,8 @@ public:
     }
     
 
-    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
-    [[nodiscard]] inline const int countNodes() const noexcept {
+    template<typename Derived,is_base_of<TreeNode<Type>,Derived> = true>
+    [[nodiscard]] const int countNodes() const noexcept {
         if(root == nullptr) {
             return 0;
         } 
@@ -205,30 +216,8 @@ public:
         return count;
     }
 
-    template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
-    [[nodiscard]] const int getHeight(Node *node) const noexcept {
-        if(node == nullptr) { return 0; }
-        int leftHeight = getHeight(node->left);
-        int rightHeight = getHeight(node->right);
-        return std::max(leftHeight,rightHeight) + 1;
-    }
-
-     template<typename Derived,base_of<TreeNode<Type>,Derived> = true>
-    [[nodiscard]] inline const bool isBalanceTree(Node *node) const noexcept {
-        if(node == nullptr) { return true; }
-
-        int leftH = getHeight(node->left);
-        int rightH = getHeight(node->right);
-
-        if(leftH-rightH > 1) { 
-            return false;
-        }
-
-        return isBalanceTree(node->left) && isBalanceTree(node->right);
-    }
-
     template<typename Func> 
-    [[maybe_unused]] inline void preorderPrint(Node *t_node,Func fnc) const noexcept { 
+    [[maybe_unused]] void preorderPrint(Node *t_node,Func fnc) const noexcept { 
         if(t_node!=nullptr) {
             fnc(root);
             preorderPrint(t_node->left,fnc);
@@ -237,7 +226,7 @@ public:
     }
 
    template<typename Func>
-   inline void postorderPrint(Node* t_node,Func fnc) const noexcept {
+    void postorderPrint(Node* t_node,Func fnc) const noexcept {
         if(t_node!=nullptr) {
          postorderPrint(t_node->left,fnc);
          fnc(t_node);
@@ -246,7 +235,7 @@ public:
     }
 
     template<typename Func> 
-    [[maybe_unused]] inline void revrorderPrint(Node* t_node,Func fnc) const noexcept {
+    [[maybe_unused]] void revrorderPrint(Node* t_node,Func fnc) const noexcept {
         if(t_node!=nullptr) {
             revrorderPrint(t_node->left,fnc);
             revrorderPrint(t_node->right,fnc);
@@ -263,3 +252,7 @@ public:
 private:
     Node  *root;
 };
+
+} // namespace ADS
+
+#endif 

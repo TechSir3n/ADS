@@ -1,6 +1,10 @@
+#ifndef ADS_INCLUDE_TREES_TREENODE_HPP_
+#define ADS_INCLUDE_TREES_TREENODE_HPP_
+
 #include <iostream>
 #include <utility>
 
+namespace ADS {
 template <typename Type>
 class TreeNode {
 public:
@@ -18,7 +22,7 @@ public:
     virtual ~TreeNode() noexcept { }
     
 protected:
-    TreeNode &operator=(TreeNode<Type> &t_node) noexcept {
+    TreeNode& operator=(const TreeNode<Type> &t_node) noexcept {
         if (this != &t_node) {
             val = std::exchange(t_node.val, Type());
             left = std::exchange(t_node.left, nullptr);
@@ -27,7 +31,7 @@ protected:
         return *this;
     }
 
-    TreeNode & operator=(TreeNode<Type> &&t_node) noexcept {
+    TreeNode& operator=(TreeNode<Type> &&t_node) noexcept {
         if(this!=&t_node) { 
             val = std::move(t_node.val);
             left = std::move(t_node.left);
@@ -37,8 +41,12 @@ protected:
         return *this;
     }
 
-public:
+public:  
     Type val;
     TreeNode *right;
     TreeNode *left;
 };
+
+} // namespace ADS 
+
+#endif

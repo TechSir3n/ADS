@@ -1,9 +1,0 @@
-
-
-
-class DBLinkList {
-public:
-
-
-private:
-};

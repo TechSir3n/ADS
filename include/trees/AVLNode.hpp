@@ -1,23 +1,49 @@
+#ifndef ADS_INCLUDE_TREES_AVLNODE_HPP_
+#define ADS_INCLUDE_TREES_AVLNODE_HPP_
+
 #include "TreeNode.hpp"
 
+namespace ADS {
 template<typename Type>
-class AVLNode {
+class AVLNode : public TreeNode<Type> {
 public:
-   explicit AVLNode() noexcept : value(Type()),left(nullptr),right(nullptr) { }
+   explicit AVLNode() noexcept : 
+       TreeNode<Type>(Type(),nullptr,nullptr) { }
 
-   explicit  AVLNode(const Type &val) : value(val),right(nullptr),left(nullptr) { }
+   explicit  AVLNode(const Type &val) :
+        TreeNode<Type>(val) { }
 
-   explicit  AVLNode(Type &&val,TreeNode *t_right,TreeNode* t_left) :
-         value(std::move(val)),right(t_right),left(t_left) { }
+   explicit  AVLNode(Type &&val,AVLNode *t_right,AVLNode* t_left) :
+        TreeNode<Type>(std::move(val),t_right,t_left) { }
 
-   AVLNode(AVLNode &&avl_node) { *this = std::move(avl_node);}
+   AVLNode(AVLNode &&avl_node):TreeNode<Type>(std::move(avl_node)) { }
 
-   AVLNode(const AVLNode &avl_node ) { *this = avl_node; }
+   AVLNode(const AVLNode &avl_node) : TreeNode<Type>(avl_node) { }
 
    virtual ~AVLNode() noexcept { }
+public:
+    AVLNode & operator=(const AVLNode<Type> &t_node) noexcept {
+        if(this!=&t_node) {
+            height = std::exchange(t_node.height,0);
+            TreeNode<Type>::operator  = (t_node);
+        }
 
+        return *this;
+    }
+
+    AVLNode & operator=(AVLNode<Type> &&t_node) noexcept {
+        if(this!=&t_node) {
+            height = std::move(t_node.height);
+            TreeNode<Type>::operator = (std::move(t_node));
+        }
+
+        return *this;
+    }
+    
 private:
-    Type value;
-    AVLNode *left;
-    AVLNode *right;
+    unsigned int height;
 };
+
+} // namespace ADS
+
+#endif 
