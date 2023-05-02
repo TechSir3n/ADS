@@ -30,7 +30,7 @@ public:
         root = new Node(3);
     }
 
-    constexpr BSTree(Node *root, const std::initializer_list<Type> &t_list)  {
+    constexpr BSTree(const std::initializer_list<Type> &t_list)  {
         std::for_each(t_list.begin(), t_list.end(), [&](auto &t_element)
                       { insert(t_element); });
     }
@@ -81,7 +81,7 @@ public:
             if(temp->val<t_element) {
                 temp = temp->right;
             } else {
-                temp =  temp->left;
+                temp = temp->left;
             }
         }
 
@@ -162,6 +162,14 @@ public:
         }
     }
 
+    void copy_bstree(Node *node,Node * &node_copy) {
+        if(node != nullptr) { 
+            node_copy = new Node(node->val);
+            copy_bstree(node->left,node->left);
+            copy_bstree(node->right,node_copy->right);
+        }
+    }
+
     template<typename Derived, is_base_of<TreeNode<Type>,Derived> = true> 
     [[nodiscard]] inline const Node * getMax(Node *node) const noexcept {
         if(node == nullptr) {
@@ -225,7 +233,7 @@ public:
         }
     }
 
-   template<typename Func>
+    template<typename Func>
     void postorderPrint(Node* t_node,Func fnc) const noexcept {
         if(t_node!=nullptr) {
          postorderPrint(t_node->left,fnc);
@@ -243,6 +251,7 @@ public:
         }
     }
 
+    template<typename Derived, is_base_of<TreeNode<Type>,Derived> = true> 
     constexpr void printElements() noexcept { 
         postorderPrint(root,[](auto element) {
             std::cout<<element->val<<' ';
@@ -250,7 +259,7 @@ public:
     }   
 
 private:
-    Node  *root;
+    Node  *root = nullptr;
 };
 
 } // namespace ADS

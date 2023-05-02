@@ -6,7 +6,7 @@
 
 namespace ADS {
 template <typename Type>
-class TreeNode {
+struct TreeNode {
 public:
     explicit TreeNode(const Type &t_val) : val(t_val), right(nullptr), left(nullptr) { }
 
@@ -21,7 +21,7 @@ public:
 
     virtual ~TreeNode() noexcept { }
     
-protected:
+public:
     TreeNode& operator=(const TreeNode<Type> &t_node) noexcept {
         if (this != &t_node) {
             val = std::exchange(t_node.val, Type());

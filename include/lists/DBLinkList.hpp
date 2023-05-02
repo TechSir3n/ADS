@@ -3,9 +3,12 @@
 
 
 namespace ADS {
+template<typename Type>    
 class DBLinkList {
 public:
+    DBLinkList() { }
 
+    virtual ~DBLinkList () noexcept { } 
 
 private:
 };

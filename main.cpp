@@ -12,11 +12,12 @@ int main(void) {
     bst.insertNode<BSTree<int>>(29);
     
     bst.erase<BSTree<int>>(19);
-    bst.printElements();
-
+    bst.printElements<BSTree<int>>();
+    std::cout<<'\n';
 
     AVLTree<int> avl;
-
+    avl.insert<AVLTree<int>>(16);
+    avl.printElements<AVLTree<int>>();
 
     return 0;
 }
