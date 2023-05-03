@@ -2,6 +2,7 @@
 #define ADS_INCLUDE_LISTS_LINKLIST_HPP_
 
 #include "ListNode.hpp"
+#include <iostream>
 
 namespace ADS {
 template <typename Type> class LinkList {
@@ -71,7 +72,32 @@ template <typename Type> class LinkList {
         temp->next = n_node;
     }
 
-    void erase(const Type& t_element) {}
+    void erase(const Type& t_element) {
+        if (head == nullptr) {
+            return;
+        }
+
+        Node* current = nullptr;
+        Node* temp = head;
+
+        while (temp != nullptr && temp->value != t_element) {
+            current = temp;
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            return;
+        }
+
+        if (head == temp) {
+            head = temp->next;
+        } else {
+            current->next = temp->next;
+        }
+
+        delete temp;
+        length--;
+    }
 
     [[nodiscard]] inline constexpr bool findValue() const noexcept { return true; }
 
@@ -80,6 +106,13 @@ template <typename Type> class LinkList {
     [[nodiscard]] inline constexpr int getMinVal() const noexcept { return 1; }
 
     [[nodiscard]] inline constexpr int size() const noexcept { return length; }
+
+    void inorderPrint() {
+        while (head != nullptr) {
+            std::cout << head->value << ' ';
+            head = head->next;
+        }
+    }
 
   private:
     Node* head;

@@ -3,12 +3,14 @@
 
 namespace ADS {
 template <typename Type> class DBLinkList {
-  public:
-    DBLinkList() {}
+  private:
+    using Node = DBLinkList<Type> public : DBLinkList() {}
 
     virtual ~DBLinkList() noexcept {}
 
   private:
+    Node* head;
+    unsigned int length;
 };
 
 } // namespace ADS

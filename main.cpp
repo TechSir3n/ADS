@@ -17,6 +17,7 @@ int main(void) {
     std::cout << '\n';
 
     AVLTree<int> avl;
+
     avl.insert<AVLTree<int>>(16);
     avl.printElements<AVLTree<int>>();
 
@@ -25,6 +26,10 @@ int main(void) {
     LinkList<int> ls;
     ls.insert(102);
     ls.insert(107);
+
+    std::cout << '\n';
+    ls.erase(102);
+    ls.inorderPrint();
 
     return 0;
 }

@@ -2,7 +2,7 @@
 #define ADS_INCLUDE_TREES_AVLTREE_HPP_
 
 #include "TreeNode.hpp"
-#include <memory>
+#include <algorithm>
 
 namespace ADS {
 template <typename Type> class AVLTree : TreeNode<Type> {
@@ -178,9 +178,7 @@ template <typename Type> class AVLTree : TreeNode<Type> {
         }
     }
 
-    [[nodiscard]] Node*
-    leftRotation(Node* node) noexcept { // используется когда разность высот правого
-                                        // поддерева больше чем  левого поддерева на 1
+    [[nodiscard]] Node* leftRotation(Node* node) noexcept {
         Node* t_node = node->right;
         Node* p_node = t_node->left;
         t_node->left = node;
@@ -188,8 +186,7 @@ template <typename Type> class AVLTree : TreeNode<Type> {
         return t_node;
     }
 
-    [[nodiscard]] Node* rightRotation(Node* node) noexcept { // используется когда разность высот
-                                                             // левого поддерева больше чем на 1
+    [[nodiscard]] Node* rightRotation(Node* node) noexcept {
         Node* t_node = node->left;
         Node* p_node = t_node->right;
         t_node->right = node;
