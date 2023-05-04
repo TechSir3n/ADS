@@ -2,7 +2,6 @@
 #define ADS_INCLUDE_CONTAINERS_QUEUE_HPP_
 
 namespace ADS {
-template <typename Value>
-class Queue {};
-}  // namespace ADS
+template <typename Value> class Queue {};
+} // namespace ADS
 #endif

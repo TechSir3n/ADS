@@ -1,11 +1,10 @@
-BasedOnStyle: Google
-
+BasedOnStyle: LLVM
 IndentWidth: 4
-
 TabWidth: 4
 
+Language: Cpp
 ColumnLimit: 100
 
 DerivePointerAlignment: false
-
 PointerAlignment: Left
+
