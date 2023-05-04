@@ -2,8 +2,9 @@
 #define ADS_INCLUDE_CONTAINERS_STACK_HPP_
 
 namespace ADS {
-template <typename Type> class Stack {};
+template <typename Type>
+class Stack {};
 
-} // namespace ADS
+}  // namespace ADS
 
 #endif
