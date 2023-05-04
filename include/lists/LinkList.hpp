@@ -2,6 +2,7 @@
 #define ADS_INCLUDE_LISTS_LINKLIST_HPP_
 
 #include "ListNode.hpp"
+#include <climits>
 #include <iostream>
 
 namespace ADS {
@@ -11,7 +12,7 @@ template <typename Type> class LinkList {
 
   public:
     constexpr LinkList() noexcept {
-        head = new Node();
+        head = new Node(22);
         length = 0;
     }
 
@@ -99,15 +100,66 @@ template <typename Type> class LinkList {
         length--;
     }
 
-    [[nodiscard]] inline constexpr bool findValue() const noexcept { return true; }
+    void reverseList() noexcept {
+        if (head == nullptr) {
+            return;
+        }
 
-    [[nodiscard]] inline constexpr int getMaxVal() const noexcept { return 1; }
+        Node* reverse = nullptr;
+        while (head != nullptr) {
+            Node* temp = head->next;
+            head->next = reverse;
+            reverse = head;
+            head = temp;
+        }
+    }
 
-    [[nodiscard]] inline constexpr int getMinVal() const noexcept { return 1; }
+    [[nodiscard]] inline constexpr bool findValue(const Type& t_val) const noexcept {
+        if (head->value == t_val) {
+            return true;
+        }
+
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->value == t_val) {
+                return true;
+            }
+            temp = temp->next;
+        }
+
+        return false;
+    }
+
+    [[nodiscard]] inline constexpr int getMaxVal() const noexcept {
+        int max_num = 0;
+        Node* temp = head;
+        while (temp != nullptr) {
+            max_num = std::max(max_num, temp->value);
+            temp = temp->next;
+        }
+
+        return max_num;
+    }
+
+    [[nodiscard]] inline constexpr int getMinVal() const noexcept {
+        int min_val = INT_MAX;
+
+        Node* temp = head;
+        while (temp != nullptr) {
+            min_val = std::min(min_val, temp->value);
+            temp = temp->next;
+        }
+
+        return min_val;
+    }
 
     [[nodiscard]] inline constexpr int size() const noexcept { return length; }
 
-    void inorderPrint() {
+    constexpr void inorderPrint() const noexcept {
+        if (head == nullptr) {
+            return;
+        }
+
         while (head != nullptr) {
             std::cout << head->value << ' ';
             head = head->next;

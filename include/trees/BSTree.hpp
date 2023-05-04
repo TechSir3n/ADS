@@ -247,7 +247,7 @@ template <typename Type> class BSTree : public TreeNode<Type> {
     }
 
     template <typename Derived, is_base_of<TreeNode<Type>, Derived> = true>
-    constexpr void printElements() noexcept {
+    inline constexpr void printElements() noexcept {
         postorderPrint(root, [](auto element) { std::cout << element->val << ' '; });
     }
 

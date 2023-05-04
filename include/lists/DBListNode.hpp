@@ -15,7 +15,7 @@ template <typename Type> struct DBListNode {
 
     ~DBListNode() = default;
 
-    DBListNode(const Type& val) : value(val) {}
+    DBListNode(const Type& val) : value(val), next(nullptr), prev(nullptr) {}
 
     DBListNode(const Type& val, DBListNode* t_next, DBListNode* t_prev)
         : value(val), next(t_next), prev(t_prev) {}

@@ -203,7 +203,7 @@ template <typename Type> class AVLTree : TreeNode<Type> {
     }
 
     template <typename Derived, is_base_of<TreeNode<Type>, Derived> = true>
-    constexpr void printElements() noexcept {
+    inline constexpr void printElements() noexcept {
         inorderPrint(root, [](auto element) { std::cout << element->val << ' '; });
     }
 
