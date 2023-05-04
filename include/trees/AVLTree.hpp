@@ -4,8 +4,17 @@
 #include "TreeNode.hpp"
 #include <algorithm>
 
+template <typename Key> struct default_key {
+    static Key value() { return Key(); }
+};
+
+template <typename Value> struct default_value {
+    static Value value() { return Value(); }
+};
+
 namespace ADS {
-template <typename Type> class AVLTree : TreeNode<Type> {
+template <typename Type, typename Key = default_key<Type>, typename Value = default_value<Type>>
+class AVLTree : public TreeNode<Type> {
   private:
     using Node = TreeNode<Type>;
 
@@ -19,7 +28,7 @@ template <typename Type> class AVLTree : TreeNode<Type> {
     using is_base_of = typename std::enable_if_t<std::is_base_of<T, TT>::value, bool>;
 
   public:
-    constexpr AVLTree() noexcept { root = new Node(10); }
+    constexpr AVLTree() noexcept { root = new Node(); }
 
     constexpr AVLTree(const std::initializer_list<Type>& t_list) noexcept {
         std::for_each(t_list.begin(), t_list.end(), [&](auto& element) { insert(element); });
@@ -50,7 +59,6 @@ template <typename Type> class AVLTree : TreeNode<Type> {
     }
 
   public:
-    template <typename Derived, is_base_of<TreeNode<Type>, Derived> = true>
     void insert(const Type& t_element) {
         Node* new_node = new Node(t_element);
 
@@ -61,27 +69,47 @@ template <typename Type> class AVLTree : TreeNode<Type> {
         Node* current = nullptr;
         Node* temp = root;
 
-        while (temp != nullptr) {
-            current = temp;
-            if (temp->val < t_element) {
-                temp = temp->right;
-            } else {
-                temp = temp->left;
+        if constexpr (std::is_same_v<Type, std::pair<Key, Value>>) {
+            while (temp != nullptr) {
+                current = temp;
+                if (temp->val.first < t_element.first) {
+                    temp = temp->right;
+                } else {
+                    temp = temp->left;
+                }
+
+                if (current == nullptr) {
+                    current = new_node;
+                } else if (current->val.first < t_element.first) {
+                    current->right = new_node;
+                } else {
+                    current->left = new_node;
+                }
+                toBalanceTree(root);
             }
-        }
-
-        if (current == nullptr) {
-            current = new_node;
-        } else if (current->val < t_element) {
-            current->right = new_node;
         } else {
-            current->left = new_node;
-        }
 
-        toBalanceTree(root);
+            while (temp != nullptr) {
+                current = temp;
+                if (temp->val < t_element) {
+                    temp = temp->right;
+                } else {
+                    temp = temp->left;
+                }
+            }
+
+            if (current == nullptr) {
+                current = new_node;
+            } else if (current->val < t_element) {
+                current->right = new_node;
+            } else {
+                current->left = new_node;
+            }
+
+            toBalanceTree(root);
+        }
     }
 
-    template <typename Derived, is_base_of<TreeNode<Type>, Derived> = true>
     void erase(const Type& t_element) {
         if (root == nullptr) {
             return;
@@ -202,9 +230,20 @@ template <typename Type> class AVLTree : TreeNode<Type> {
         }
     }
 
-    template <typename Derived, is_base_of<TreeNode<Type>, Derived> = true>
+    void printElementsHelper(const TreeNode<std::pair<Key, Value>>* root) {
+        if (root != nullptr) {
+            printElementsHelper(root->left);
+            std::cout << root->val.first << ": " << root->val.second << std::endl;
+            printElementsHelper(root->right);
+        }
+    }
+
     inline constexpr void printElements() noexcept {
-        inorderPrint(root, [](auto element) { std::cout << element->val << ' '; });
+        if constexpr (std::is_same_v<Type, std::pair<Key, Value>>) {
+            printElementsHelper(root);
+        } else {
+            inorderPrint(root, [](auto element) { std::cout << element->val << ' '; });
+        }
     }
 
   private:

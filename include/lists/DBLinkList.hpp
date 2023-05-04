@@ -96,14 +96,14 @@ template <typename Type> class DBLinkList {
         delete curr;
     }
 
-    [[nodiscard]] inline constexpr bool findValue(const Type& t_key) const noexcept { 
-        if(head->value == t_key || head->prev->value == t_key) { 
+    [[nodiscard]] inline constexpr bool findValue(const Type& t_key) const noexcept {
+        if (head->value == t_key || head->prev->value == t_key) {
             return true;
         }
 
         Node* temp = head;
-        while(temp!=nullptr) { 
-            if(temp->value == t_key){
+        while (temp != nullptr) {
+            if (temp->value == t_key) {
                 return true;
             }
             temp = temp->next;
@@ -111,26 +111,25 @@ template <typename Type> class DBLinkList {
         return false;
     }
 
-
-    [[nodiscard]] inline constexpr int getMaxVal() const noexcept { 
+    [[nodiscard]] inline constexpr int getMaxVal() const noexcept {
         int m_value = 0;
 
-        while(head!=nullptr) { 
-            m_value = std::max(m_value,head->value);
+        while (head != nullptr) {
+            m_value = std::max(m_value, head->value);
             head = head->next;
         }
         return m_value;
     }
 
-    [[nodiscard]] inline constexpr int getMinVal() const noexcept { 
+    [[nodiscard]] inline constexpr int getMinVal() const noexcept {
         int min_val = 0;
 
-        while(head!=nullptr) {
-            min_val = std::min(min_val,head->next);
+        while (head != nullptr) {
+            min_val = std::min(min_val, head->next);
             head = head->next;
         }
         return min_val;
-     }
+    }
 
     inline constexpr void printReverse() const noexcept {
         if (head == nullptr) {
