@@ -355,7 +355,8 @@ class AVLTree {
             printPair(root);
         } else {
             inorderPrint(root, [](auto element) {
-                std::cout << "Value: " << element->val.first << "Value:" << element->val.second << '\n';
+                std::cout << "Value: " << element->val.first << "Value:" << element->val.second
+                          << '\n';
             });
         }
     }

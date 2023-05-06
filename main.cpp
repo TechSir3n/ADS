@@ -1,4 +1,5 @@
 #include "./include/containers/map.hpp"
+#include "./include/containers/stack.hpp"
 #include "./include/lists/DBLinkList.hpp"
 #include "./include/lists/LinkList.hpp"
 #include "./include/trees/AVLTree.hpp"
@@ -9,11 +10,17 @@
 using namespace ADS;
 
 int main(void) {
-    Map<int, int> mp_t1;
-    mp_t1.insert(std::pair<int, int>(10, 20));
-    mp_t1.insert(std::pair<int, int>(30, 40));
-    mp_t1.erase(30);
-    mp_t1.printData();
-    
+    try {
+        Stack<int> st;
+        st.push(12);
+        st.push(14);
+        std::cout<<st.top();
+        st.pop();
+        st.showElements();
+    } catch (std::out_of_range& st) {
+        std::cerr << st.what() << '\n';
+    } catch (...) {
+        std::cerr << "Catched exception ";
+    }
     return 0;
 }

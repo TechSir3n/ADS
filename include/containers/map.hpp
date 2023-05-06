@@ -32,13 +32,13 @@ template <typename Key, typename Value> class Map {
     Map& operator=(const Map&) = default;
 
   public:
-    Key& at(const Key& key) { 
+    Key& at(const Key& key) {
         auto val = avl.find(key);
         return *val;
     }
 
     Key& operator[](const Key& key) {
-         auto val = avl.find(key);
+        auto val = avl.find(key);
         return *val;
     }
 
