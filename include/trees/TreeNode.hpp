@@ -7,12 +7,13 @@
 namespace ADS {
 template <typename Type> struct TreeNode {
   public:
-    explicit TreeNode(const Type& t_val) : val(t_val), right(nullptr), left(nullptr) {}
+    explicit TreeNode(const Type& t_val)
+        : val(t_val), right(nullptr), left(nullptr), parent(nullptr) {}
 
-    TreeNode() : val(Type()), right(nullptr), left(nullptr) {}
+    TreeNode() : val(Type()), right(nullptr), left(nullptr), parent(nullptr) {}
 
-    explicit TreeNode(Type&& t_val, TreeNode* t_left, TreeNode* t_right)
-        : val(std::move(t_val)), right(t_right), left(t_left) {}
+    explicit TreeNode(Type&& t_val, TreeNode* t_left, TreeNode* t_right, TreeNode* t_parent)
+        : val(std::move(t_val)), right(t_right), left(t_left), parent(t_parent) {}
 
     TreeNode(TreeNode&& t_node) noexcept { *this = std::move(t_node); }
 
@@ -26,6 +27,7 @@ template <typename Type> struct TreeNode {
             val = std::exchange(t_node.val, Type());
             left = std::exchange(t_node.left, nullptr);
             right = std::exchange(t_node.right, nullptr);
+            parent = std::exchange(t_node.parent, nullptr);
         }
         return *this;
     }
@@ -35,6 +37,7 @@ template <typename Type> struct TreeNode {
             val = std::move(t_node.val);
             left = std::move(t_node.left);
             right = std::move(t_node.right);
+            parent = std::move(t_node.parent);
         }
 
         return *this;
@@ -44,6 +47,7 @@ template <typename Type> struct TreeNode {
     Type val;
     TreeNode* right;
     TreeNode* left;
+    TreeNode* parent;
 };
 
 } // namespace ADS

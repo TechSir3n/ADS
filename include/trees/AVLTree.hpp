@@ -3,6 +3,8 @@
 
 #include "TreeNode.hpp"
 #include <algorithm>
+#include <iomanip>
+#include <queue>
 
 template <typename Key> struct default_key {
     static Key value() { return Key(); }
@@ -14,7 +16,7 @@ template <typename Value> struct default_value {
 
 namespace ADS {
 template <typename Type, typename Key = default_key<Type>, typename Value = default_value<Type>>
-class AVLTree : public TreeNode<Type> {
+class AVLTree {
   private:
     using Node = TreeNode<Type>;
 
@@ -28,7 +30,89 @@ class AVLTree : public TreeNode<Type> {
     using is_base_of = typename std::enable_if_t<std::is_base_of<T, TT>::value, bool>;
 
   public:
-    constexpr AVLTree() noexcept { root = new Node(); }
+    class Iterator {
+      public:
+        Iterator() : m_node(nullptr), tree(nullptr) {}
+
+        Iterator(Node* node) : m_node(node), tree(nullptr) {}
+
+        Iterator& operator++() {
+            if (m_node->right != nullptr) {
+                m_node = m_node->right;
+                while (m_node->left != nullptr) {
+                    m_node = m_node->left;
+                }
+            } else {
+                Node* parent = m_node->parent;
+                while (parent != nullptr && m_node == parent->right) {
+                    m_node = parent;
+                    parent = parent->parent;
+                }
+                m_node = parent;
+            }
+            return *this;
+        }
+
+        Iterator& operator--() {
+            if (m_node == nullptr) {
+                m_node = tree->root;
+
+                if (m_node == nullptr) {
+                    return *this;
+                }
+
+                while (m_node->right != nullptr) {
+                    m_node = m_node->right;
+                }
+            } else if (m_node->left != nullptr) {
+                m_node = m_node->left;
+
+                while (m_node->right != nullptr) {
+                    m_node = m_node->right;
+                }
+            } else {
+                Node* parent = m_node->parent;
+                while (parent != nullptr && m_node == parent->left) {
+                    m_node = parent;
+                    parent = parent->parent;
+                }
+                m_node = parent;
+            }
+
+            return *this;
+        }
+
+        Iterator begin() {
+            Node* current;
+            if (!current) {
+                return Iterator(nullptr);
+            }
+
+            while (current != nullptr) {
+                current = current->left;
+            }
+
+            return Iterator(current);
+        }
+
+        Iterator end() { return Iterator(nullptr); }
+
+        std::pair<const Key, Value>& operator*() const {
+            return m_node->val;
+            ;
+        }
+
+        bool operator==(const Iterator& other) const { return m_node == other.m_node; }
+
+        bool operator!=(const Iterator& other) const { return !(*this == other); }
+
+      private:
+        Node* m_node;
+        AVLTree<Key, Value>* tree;
+    };
+
+  public:
+    constexpr AVLTree() noexcept { root = new Node; }
 
     constexpr AVLTree(const std::initializer_list<Type>& t_list) noexcept {
         std::for_each(t_list.begin(), t_list.end(), [&](auto& element) { insert(element); });
@@ -70,7 +154,7 @@ class AVLTree : public TreeNode<Type> {
         Node* temp = root;
 
         if constexpr (std::is_same_v<Type, std::pair<Key, Value>>) {
-            while (temp != nullptr) {
+            while (temp != nullptr && temp->val.first != t_element.first) {
                 current = temp;
                 if (temp->val.first < t_element.first) {
                     temp = temp->right;
@@ -78,17 +162,20 @@ class AVLTree : public TreeNode<Type> {
                     temp = temp->left;
                 }
 
-                if (current == nullptr) {
-                    current = new_node;
-                } else if (current->val.first < t_element.first) {
-                    current->right = new_node;
+                if (!temp) {
+
+                    if (current == nullptr) {
+                        current = new_node;
+                    } else if (current->val.first < t_element.first) {
+                        current->right = new_node;
+                    } else {
+                        current->left = new_node;
+                    }
                 } else {
-                    current->left = new_node;
+                    temp->val.first = t_element->val.first;
                 }
-                toBalanceTree(root);
             }
         } else {
-
             while (temp != nullptr) {
                 current = temp;
                 if (temp->val < t_element) {
@@ -105,21 +192,22 @@ class AVLTree : public TreeNode<Type> {
             } else {
                 current->left = new_node;
             }
-
-            toBalanceTree(root);
         }
+
+        new_node->parent = current;
+        root = toBalanceTree(root);
     }
 
-    void erase(const Type& t_element) {
+    template <typename rKey, typename rValue> void erase(const std::pair<rKey, rValue>& key) {
         if (root == nullptr) {
             return;
         }
 
         Node* parent = nullptr;
         Node* temp = root;
-        while (temp != nullptr && temp->val != t_element) {
+        while (temp != nullptr && temp->val.first != key.first) {
             parent = temp;
-            if (temp->val < t_element) {
+            if (temp->val.first < key.first) {
                 temp = temp->right;
             } else {
                 temp = temp->left;
@@ -137,6 +225,9 @@ class AVLTree : public TreeNode<Type> {
                 } else {
                     parent->right = nullptr;
                 }
+                delete temp;
+            } else {
+                root = nullptr;
                 delete temp;
             }
         } else if (temp->left == nullptr) {
@@ -173,12 +264,27 @@ class AVLTree : public TreeNode<Type> {
             if (parent == nullptr) {
                 temp->right = minRight->right;
             } else {
-                parent->left = minRight->left;
+                parent->left = minRight->right;
             }
             delete minRight;
+
+            root = toBalanceTree(root);
+        }
+    }
+
+    [[nodiscard]] Iterator find(const Type& key) const {
+        Node* node = root;
+        while (node != nullptr) {
+            if (key == node->val) {
+                return Iterator(node);
+            } else if (key < node->val) {
+                node = node->left;
+            } else {
+                node = node->right;
+            }
         }
 
-        toBalanceTree(root);
+        return nullptr;
     }
 
     [[nodiscard]] const int getHeight(Node* node) const noexcept {
@@ -192,18 +298,20 @@ class AVLTree : public TreeNode<Type> {
         return getHeight(node->left) - getHeight(node->right);
     }
 
-    void toBalanceTree(Node* node) {
+    Node* toBalanceTree(Node* node) {
         if (balanceFactor(node) > 1) { // левое поддерево слишком высоко
             if (balanceFactor(node->left) < 0) {
                 node->left = leftRotation(node->left);
             }
-            rightRotation(node);
+            node = rightRotation(node);
         } else if (balanceFactor(node) < -1) { // правое поддерево слишком высоко
             if (balanceFactor(node->right) > 0) {
                 node->right = rightRotation(node->right);
             }
-            leftRotation(node);
+            node = leftRotation(node);
         }
+
+        return node;
     }
 
     [[nodiscard]] Node* leftRotation(Node* node) noexcept {
@@ -222,6 +330,10 @@ class AVLTree : public TreeNode<Type> {
         return t_node;
     }
 
+    [[nodiscard]] inline constexpr Node* get_root() const noexcept { return root; }
+
+    [[nodiscard]] inline Node* get_root() noexcept { return root; }
+
     template <typename Func> void inorderPrint(Node* node, Func fnc) const noexcept {
         if (node != nullptr) {
             inorderPrint(node->left, fnc);
@@ -230,19 +342,21 @@ class AVLTree : public TreeNode<Type> {
         }
     }
 
-    void printElementsHelper(const TreeNode<std::pair<Key, Value>>* root) {
+    void printPair(const TreeNode<std::pair<Key, Value>>* root) {
         if (root != nullptr) {
-            printElementsHelper(root->left);
-            std::cout << root->val.first << ": " << root->val.second << std::endl;
-            printElementsHelper(root->right);
+            printPair(root->left);
+            std::cout << "Key:" << root->val.first << " Value: " << root->val.second << '\n';
+            printPair(root->right);
         }
     }
 
     inline constexpr void printElements() noexcept {
         if constexpr (std::is_same_v<Type, std::pair<Key, Value>>) {
-            printElementsHelper(root);
+            printPair(root);
         } else {
-            inorderPrint(root, [](auto element) { std::cout << element->val << ' '; });
+            inorderPrint(root, [](auto element) {
+                std::cout << "Value: " << element->val.first << "Value:" << element->val.second << '\n';
+            });
         }
     }
 

@@ -7,13 +7,21 @@ namespace ADS {
 template <typename Key, typename Value> class Map {
   private:
     using const_value = const Value;
+
     using reference_const = const Value&;
+
     using value_type = Value;
 
-  public:
-    Map() : t_key(Key()), t_value(Value()) {}
+    using size_type = std::size_t;
 
-    Map(const std::initializer_list<Value>& t_value) {}
+    using const_key = Key;
+
+  public:
+    Map() {}
+
+    Map(const std::initializer_list<Value>& t_value) {
+        std::for_each(t_value.begin(), t_value.end(), [](auto& t_value) { insert(t_value); });
+    }
 
     Map(const Map<Key, Value>& t_map) {}
 
@@ -24,28 +32,51 @@ template <typename Key, typename Value> class Map {
     Map& operator=(const Map&) = default;
 
   public:
-    void insert(const std::pair<Key, Value>& pair) {
-        AVLTree<std::pair<Key, Value>> avl;
-        avl.insert(pair);
+    Key& at(const Key& key) {}
+
+    Key& operator[](const Key& key) {}
+
+  public:
+    inline void insert(const std::pair<const_key, value_type>& pair) { avl.insert(pair); }
+
+    inline void insert(const Key& key, const Value& value) { avl.insert({key, value}); }
+
+    inline void erase(const Key& key) { avl.erase(std::make_pair(key, 0)); }
+
+    bool empty() const noexcept {
+        if (avl.root == nullptr) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    bool empty() const noexcept {}
+    size_type size() const noexcept {
+        int sz = avl.getHeight();
+        if (sz == 0) {
+            return 0u;
+        } else {
+            return sz;
+        }
+    }
 
-    size_t size() const noexcept {}
-
-    size_t max_size() const noexcept {}
-
-    void clear();
-
-    void swap(Map& other) {}
+    void swap(Map& other) { std::swap(avl, other.avl); }
 
     void merge(Map& other) {}
 
-    bool contains(const Key& t_key);
+    bool contains(const Key& t_key) {
+        auto contain = avl.find(t_key);
+        if (contain == nullptr) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    void printData() { avl.printElements(); }
 
   private:
-    Key t_key;
-    Value t_value;
+    AVLTree<std::pair<Key, Value>> avl;
 };
 } // namespace ADS
 #endif
