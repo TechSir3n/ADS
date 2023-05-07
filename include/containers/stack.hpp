@@ -17,9 +17,9 @@ template <typename Type> class Stack {
     using size_type = std::size_t;
 
   public:
-    Stack() { data.reserve(sz++); }
+    Stack(size_type init_sz = 10) : sz(init_sz) { data.reserve(sz); }
 
-    Stack(const std::initializer_list<Type>& t_list) {
+    Stack(const std::initializer_list<value_type>& t_list) {
         std::for_each(t_list.begin(), t_list.end(), [](auto& t_element) { push(t_element); });
     }
 
@@ -34,29 +34,36 @@ template <typename Type> class Stack {
     Stack& operator=(const Stack& st) = default;
 
   public:
-    inline constexpr const Type& top() const noexcept { return data.back(); }
+    inline constexpr const Type& top() const {
+        if (empty()) {
+            throw std::runtime_error("Cannot get top element in stack");
+        }
+        return data.back();
+    }
 
-    inline constexpr bool empty() const noexcept { return data.empty(); }
+    [[nodiscard]] inline constexpr bool empty() const { return size() == 0 ? true : false; }
 
-    inline constexpr size_type size() const noexcept { return data.size(); }
+    [[nodiscard]] inline constexpr size_type size() const noexcept { return data.size(); }
 
     inline void push(const_reference t_element) {
-        if (data.size() > sz) {
+        if (data.size() >= sz) {
             throw std::out_of_range("overflow stack !");
         }
         data.push_back(t_element);
     }
 
     inline void pop() {
-        if (!data.empty()) {
+        if (data.empty()) {
             throw std::out_of_range("Stack is empty !");
         }
 
         data.pop_back();
-        sz--;
     }
 
-    inline void swap(Stack&& other) { std::swap(data, other); }
+    inline void swap(Stack& other) {
+        std::swap(data, other.data);
+        std::swap(sz, other.sz);
+    }
 
     inline constexpr void showElements() {
         if (!empty()) {
@@ -67,7 +74,7 @@ template <typename Type> class Stack {
 
   private:
     std::vector<Type> data;
-    size_type sz = 0;
+    size_type sz;
 };
 
 } // namespace ADS
