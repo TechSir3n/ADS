@@ -49,7 +49,7 @@ template <typename Key, typename Value> class Map {
 
     inline void erase(const Key& key) { avl.erase(std::make_pair(key, 0)); }
 
-    bool empty() const noexcept {
+    inline constexpr bool empty() const noexcept {
         if (avl.root == nullptr) {
             return false;
         } else {
@@ -57,7 +57,7 @@ template <typename Key, typename Value> class Map {
         }
     }
 
-    size_type size() const noexcept {
+    inline size_type size() const noexcept {
         int sz = avl.getHeight();
         if (sz == 0) {
             return 0u;
@@ -66,11 +66,11 @@ template <typename Key, typename Value> class Map {
         }
     }
 
-    void swap(Map& other) { std::swap(avl, other.avl); }
+    inline void swap(Map& other) { std::swap(avl, other.avl); }
 
-    void merge(Map& other) {}
+    inline void merge(Map& other) {}
 
-    bool contains(const Key& t_key) {
+    inline bool contains(const Key& t_key) {
         auto contain = avl.find(t_key);
         if (contain == nullptr) {
             return false;
@@ -79,7 +79,7 @@ template <typename Key, typename Value> class Map {
         }
     }
 
-    void printData() { avl.printElements(); }
+    inline void printData() { avl.printElements(); }
 
   private:
     AVLTree<std::pair<Key, Value>> avl;

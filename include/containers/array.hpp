@@ -38,49 +38,48 @@ template <typename Type, std::size_t N> class Array {
     Array& operator=(Array&& q) = default;
 
   public:
-    const_reference at(size_type pos) {
+    inline const_reference at(size_type pos) {
         if (pos >= N) {
             throw std::out_of_range("Array::at index out of range");
         }
         return m_data[pos];
     }
 
-    const_reference front() { return m_data[0]; }
+    [[nodiscard]] inline const_reference front() { return m_data[0]; }
 
-    const_reference back() { return m_data[N - 1]; }
+    [[nodiscard]] inline const_reference back() { return m_data[N - 1]; }
 
-    reference_type operator[](size_type pos) {
+    inline reference_type operator[](size_type pos) {
         if (pos >= N) {
             std::out_of_range("Array::[] index out of range");
         }
         return m_data[pos];
     }
-    const_reference operator[](size_type pos) const {
 
+    inline const_reference operator[](size_type pos) const {
         if (pos >= N) {
             std::out_of_range("Array::[] index out of range");
-            return m_data[pos];
         }
+        return m_data[pos];
     }
 
-    iterator data() noexcept { return m_data; }
+    [[nodiscard]] inline iterator data() noexcept { return m_data; }
 
-    const_iterator data() const noexcept { return m_data; }
+    [[nodiscard]] inline const_iterator data() const noexcept { return m_data; }
 
-    inline constexpr bool empty() const noexcept { return size() == 0; }
+    [[nodiscard]] inline constexpr bool empty() const noexcept { return size() == 0; }
 
-    inline constexpr size_type size() noexcept { return N; }
+    [[nodiscard]] inline constexpr size_type size() noexcept { return N; }
 
-    size_type max_size() { return std::numeric_limits<size_type>::max(); }
-    
-    void swap(Array&& other) { std::swap_ranges(m_data, m_data + N, other.m_data); }
+    inline size_type max_size() { return std::numeric_limits<size_type>::max(); }
 
-    void fill(const_reference value) { std::fill_n(m_data, N, value); }
+    inline void swap(Array&& other) { std::swap_ranges(m_data, m_data + N, other.m_data); }
 
-    void showElements() { 
-      std::for_each(m_data,m_data+N,[](const_reference element) {
-          std::cout<<element<<' ';
-      });
+    inline void fill(const_reference value) { std::fill_n(m_data, N, value); }
+
+    inline void showElements() {
+        std::for_each(m_data, m_data + N,
+                      [](const_reference element) { std::cout << element << ' '; });
     }
 
   private:
